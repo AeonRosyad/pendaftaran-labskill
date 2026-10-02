@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pendaftaran Program Pengembangan Labskill Siswa</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      min-height: 100vh;
+      padding: 30px 12px;
+    }
+    .form-card {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 77, 64, 0.1);
+      border: none;
+      overflow: hidden;
+    }
+    .form-header {
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+      color: white;
+      padding: 35px 30px;
+      position: relative;
+    }
+    .form-header h2 {
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .option-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .option-card:hover:not(.disabled) {
+      border-color: #2e7d32;
+      background-color: #f1f8e9;
+      transform: translateY(-2px);
+    }
+    .option-card.selected {
+      border-color: #1b5e20;
+      background-color: #e8f5e9;
+      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+    }
+    .option-card.disabled {
+      background-color: #f5f5f5;
+      border-color: #eee;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .badge-quota {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .btn-submit {
+      background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 12px;
+      width: 100%;
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+      box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+      color: white;
+    }
+    .custom-input {
+      border-radius: 10px;
+      padding: 12px 16px;
+      border: 1.5px solid #ced4da;
+    }
+    .custom-input:focus {
+      border-color: #2e7d32;
+      box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container max-width-md" style="max-width: 720px;">
+  <div class="card form-card">
+    <div class="form-header">
+      <div class="d-flex align-items-center gap-3 mb-2">
+        <i class="fa-solid fa-graduation-cap fa-2x"></i>
+        <span class="badge bg-light text-success fw-bold px-3 py-2 rounded-pill">Tahun Ajaran 2026/2027</span>
+      </div>
+      <h2 class="mb-1">Pendaftaran Program Labskill Siswa</h2>
+      <p class="mb-0 text-white-50">Pilih salah satu program pengembangan keterampilan pilihan Anda. Kuota terbatas!</p>
+    </div>
+
+    <div class="card-body p-4 p-md-5">
+      <div id="alertContainer"></div>
+
+      <form id="labskillForm">
+        <!-- Input Nama Lengkap -->
+        <div class="mb-4">
+          <label for="nama" class="form-label fw-semibold text-dark">Nama Lengkap <span class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" id="nama" placeholder="Masukkan nama lengkap Anda" required>
+        </div>
+
+        <!-- Input Kelas -->
+        <div class="mb-4">
+          <label for="kelas" class="form-label fw-semibold text-dark">Kelas <span class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" id="kelas" placeholder="Contoh: X TKJ 1 / XI RPL 2" required>
+        </div>
+
+        <!-- Pilihan Keterampilan -->
+        <div class="mb-4">
+          <label class="form-label fw-semibold text-dark mb-1">Pilihan Keterampilan (Labskill) <span class="text-danger">*</span></label>
+          <p class="text-muted small mb-3">Sisa kuota diperbarui secara langsung.</p>
+
+          <div id="skillsContainer">
+            <div class="text-center py-4">
+              <div class="spinner-border text-success" role="status"></div>
+              <p class="text-muted small mt-2">Memuat sisa kuota...</p>
+            </div>
+          </div>
+          <input type="hidden" id="keterampilanSelected" name="keterampilan" required>
+        </div>
+
+        <!-- Tombol Submit -->
+        <button type="submit" class="btn btn-submit" id="submitBtn">
+          <i class="fa-solid fa-paper-plane me-2"></i> Kirim Pendaftaran
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- JS Bootstrap & Script -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/bootstrap.bundle.min.js"></script>
+<script>
+  // PASTE URL GOOGLE APPS SCRIPT ANDA DI SINI
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvXZ5g-DG9duZN-DOga8otpjNmIVt89Rw8eSB9OzX-RAVcOmhTYVb1lRLxSBwa2PdcFw/exec";
+
+  const skillsData = [
+    { name: "Robotik", total: 26, icon: "fa-robot" },
+    { name: "Desain Komunikasi Visual", total: 26, icon: "fa-palette" },
+    { name: "Tata Boga", total: 26, icon: "fa-utensils" },
+    { name: "Batik", total: 26, icon: "fa-shirt" },
+    { name: "Teknik Bisnis Sepeda Motor", total: 25, icon: "fa-motorcycle" },
+    { name: "Menjahit", total: 25, icon: "fa-scissors" },
+    { name: "Potong Rambut", total: 15, icon: "fa-user-scissors" },
+    { name: "Make Up Artist", total: 20, icon: "fa-wand-magic-sparkles" }
+  ];
+
+  // Muat status sisa kuota dari Google Sheets
+  async function loadQuota() {
+    try {
+      const response = await fetch(WEB_APP_URL);
+      const result = await response.json();
+
+      if (result.status === "success") {
+        renderSkillOptions(result.data);
+      } else {
+        throw new Error("Gagal mengambil data kuota.");
+      }
+    } catch (err) {
+      console.error(err);
+      // Jika terjadi kesalahan koneksi, tampilkan dengan batas kuota default
+      const defaultQuota = {};
+      skillsData.forEach(item => defaultQuota[item.name] = item.total);
+      renderSkillOptions(defaultQuota);
+    }
+  }
+
+  function renderSkillOptions(remainingQuota) {
+    const container = document.getElementById("skillsContainer");
+    container.innerHTML = "";
+
+    skillsData.forEach(skill => {
+      const remaining = remainingQuota[skill.name] !== undefined ? remainingQuota[skill.name] : skill.total;
+      const isFull = remaining <= 0;
+
+      const card = document.createElement("div");
+      card.className = `option-card ${isFull ? 'disabled' : ''}`;
+      card.dataset.value = skill.name;
+
+      let badgeClass = "bg-success text-white";
+      let badgeText = `Sisa Kuota: ${remaining}`;
+
+      if (isFull) {
+        badgeClass = "bg-danger text-white";
+        badgeText = "Penuh";
+      } else if (remaining <= 5) {
+        badgeClass = "bg-warning text-dark";
+      }
+
+      card.innerHTML = `
+        <div class="d-flex align-items-center gap-3">
+          <i class="fa-solid ${skill.icon} text-success fs-5"></i>
+          <div>
+            <div class="fw-semibold text-dark">${skill.name}</div>
+            <small class="text-muted">Total Kuota: ${skill.total}</small>
+          </div>
+        </div>
+        <span class="badge badge-quota ${badgeClass}">${badgeText}</span>
+      `;
+
+      if (!isFull) {
+        card.addEventListener("click", () => {
+          document.querySelectorAll(".option-card").forEach(el => el.classList.remove("selected"));
+          card.classList.add("selected");
+          document.getElementById("keterampilanSelected").value = skill.name;
+        });
+      }
+
+      container.appendChild(card);
+    });
+  }
+
+  // Handle pengiriman Form
+  document.getElementById("labskillForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const nama = document.getElementById("nama").value.trim();
+    const kelas = document.getElementById("kelas").value.trim();
+    const keterampilan = document.getElementById("keterampilanSelected").value;
+    const alertContainer = document.getElementById("alertContainer");
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (!keterampilan) {
+      alertContainer.innerHTML = `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <i class="fa-solid fa-circle-exclamation me-2"></i> Silakan pilih salah satu keterampilan terlebih dahulu.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>`;
+      return;
+    }
+
+    // Ubah status tombol loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Memproses Pendaftaran...`;
+    alertContainer.innerHTML = "";
+
+    try {
+      const response = await fetch(WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ nama, kelas, keterampilan })
+      });
+
+      const result = await response.json();
+
+      if (result.status === "success") {
+        alertContainer.innerHTML = `
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i> <strong>Berhasil!</strong> ${result.message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>`;
+        document.getElementById("labskillForm").reset();
+        document.querySelectorAll(".option-card").forEach(el => el.classList.remove("selected"));
+        document.getElementById("keterampilanSelected").value = "";
+        loadQuota(); // Perbarui sisa kuota secara otomatis
+      } else {
+        alertContainer.innerHTML = `
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i> <strong>Gagal:</strong> ${result.message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>`;
+      }
+    } catch (err) {
+      alertContainer.innerHTML = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fa-solid fa-wifi me-2"></i> Terjadi kesalahan koneksi. Silakan coba beberapa saat lagi.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>`;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane me-2"></i> Kirim Pendaftaran`;
+    }
+  });
+
+  // Jalankan saat halaman dibuka
+  loadQuota();
+</script>
+</body>
+</html>
